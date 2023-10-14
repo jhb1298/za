@@ -84,7 +84,7 @@ app.post('/api/add_transactionss', (req, res) => {
   console.log("hitted")
   try {
     const { id, amount, type, date, details } = req.body;
-    alert(id+" "+ amount+" "+ type+" "+ date+" " + details)
+    console.log(id+" "+ amount+" "+ type+" "+ date+" " + details)
 
     // Create an SQL query to insert a new transaction into the database
     const addTransactionQuery = 'INSERT INTO transactions (id, amount, type, date, details) VALUES (?, ?, ?, ?, ?)';
