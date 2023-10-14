@@ -25,6 +25,9 @@ const db = mysql.createConnection({
 });
 
 
+const noticeTable = 'notices';
+const transactionTable = 'transactions';
+
 
 // Define the 'get-notice' SQL API route to fetch notice data
 app.get('/api/get-notices', (req, res) => {
@@ -73,6 +76,53 @@ app.post('/api/postnotices', (req, res) => {
 });
 
 
+
+
+
+// Define a route to add a transaction
+app.post('/api/add-transactions', (req, res) => {
+  try {
+    const { /* Extract transaction data from req.body */ } = req.body;
+
+    // Create an SQL query to insert a new transaction into the database
+    const addTransactionQuery = 'INSERT INTO transactions (/* specify the columns */) VALUES (?, ?, ?)';
+
+    db.query(addTransactionQuery, [/* specify the values */], (err, result) => {
+      if (err) {
+        console.error('Error saving transaction data:', err);
+        return res.status(500).json({ error: 'An error occurred while saving transaction data' });
+      }
+
+      return res.status(201).json({ message: 'Transaction data saved successfully' });
+    });
+  } catch (error) {
+    console.error('Error saving transaction data:', error);
+    res.status(500).json({ error: 'An error occurred while saving transaction data' });
+  }
+});
+
+
+
+
+// Define a route to get all transactions from the database
+app.get('/api/get-all-transactionss', (req, res) => {
+  try {
+    // Create an SQL query to retrieve all transactions from the database and sort by id in ascending order
+    const getAllTransactionsQuery = 'SELECT * FROM transactions ORDER BY id ASC';
+
+    db.query(getAllTransactionsQuery, (err, rows) => {
+      if (err) {
+        console.error('Error fetching transactions:', err);
+        return res.status(500).json({ error: 'An error occurred while fetching transactions' });
+      }
+
+      res.status(200).json(rows);
+    });
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ error: 'An error occurred while fetching transactions' });
+  }
+});
 
 
 //***********************************************************************************************************************
