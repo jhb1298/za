@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mysql = require('mysql');
 
 
 
@@ -12,6 +13,47 @@ app.use(cors());
 
 // Middleware to parse JSON requests
 app.use(bodyParser.json());
+
+//******************************************************************************************************************
+
+// Create a MySQL database connection
+const db = mysql.createConnection({
+  host: 'sql12.freesqldatabase.com',
+  user: 'sql12653349',
+  password: 'IHgqAdagty',
+  database: 'sql12653349',
+});
+
+
+
+// Define the 'get-notice' SQL API route to fetch notice data
+app.get('/api/get-notices', (req, res) => {
+  try {
+    // Create an SQL query to select all notices from your SQL database table
+    const selectNoticesQuery = 'SELECT * FROM notices';
+
+    // Execute the SQL query to fetch all notices
+    db.query(selectNoticesQuery, (err, results) => {
+      if (err) {
+        console.error('Error fetching notices:', err);
+        res.status(500).json({ error: 'An error occurred while fetching notices' });
+      } else {
+        // Send the fetched notices as a response
+        res.status(200).json(results);
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching notices:', error);
+    res.status(500).json({ error: 'An error occurred while fetching notices' });
+  }
+});
+
+
+
+
+//***********************************************************************************************************************
+
+
 
 
 // Connect to MongoDB
@@ -655,6 +697,9 @@ app.get('/api/get-notice', async (req, res) => {
       res.status(500).json({ error: 'An error occurred while fetching notices' });
   }
 });
+
+
+
 
 
 
