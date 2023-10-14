@@ -80,7 +80,7 @@ app.post('/api/postnotices', (req, res) => {
 
 
 // Define a route to add a transaction
-app.post('/api/add-transactions', (req, res) => {
+app.post('/api/add-transactionss', (req, res) => {
   try {
     const { id, amount, type, date, details } = req.body;
     alert(id+" "+ amount+" "+ type+" "+ date+" " + details)
