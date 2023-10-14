@@ -49,6 +49,30 @@ app.get('/api/get-notices', (req, res) => {
 });
 
 
+// Define a route to handle posting a notice
+app.post('/api/postnotices', (req, res) => {
+  try {
+    const { notice } = req.body;
+
+    // Create an SQL query to insert a new notice into the database
+    const insertNoticeQuery = 'INSERT INTO notices (text) VALUES (?)';
+
+    // Execute the SQL query to insert the new notice
+    db.query(insertNoticeQuery, [notice], (err, result) => {
+      if (err) {
+        console.error('Error posting notice:', err);
+        return res.status(500).json({ error: 'An error occurred while posting notice' });
+      }
+
+      res.status(201).json({ message: 'Notice posted successfully' });
+    });
+  } catch (error) {
+    console.error('Error posting notice:', error);
+    res.status(500).json({ error: 'An error occurred while posting notice' });
+  }
+});
+
+
 
 
 //***********************************************************************************************************************
