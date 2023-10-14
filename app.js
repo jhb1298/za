@@ -83,6 +83,7 @@ app.post('/api/postnotices', (req, res) => {
 app.post('/api/add-transactions', (req, res) => {
   try {
     const { id, amount, type, date, details } = req.body;
+    alert(id+" "+ amount+" "+ type+" "+ date+" " + details)
 
     // Create an SQL query to insert a new transaction into the database
     const addTransactionQuery = 'INSERT INTO transactions (id, amount, type, date, details) VALUES (?, ?, ?, ?, ?)';
@@ -100,6 +101,7 @@ app.post('/api/add-transactions', (req, res) => {
     res.status(500).json({ error: 'An error occurred while saving transaction data' });
   }
 });
+
 
 
 
