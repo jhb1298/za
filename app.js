@@ -82,12 +82,12 @@ app.post('/api/postnotices', (req, res) => {
 // Define a route to add a transaction
 app.post('/api/add-transactions', (req, res) => {
   try {
-    const { /* Extract transaction data from req.body */ } = req.body;
+    const { id, amount, type, date, details } = req.body;
 
     // Create an SQL query to insert a new transaction into the database
-    const addTransactionQuery = 'INSERT INTO transactions (/* specify the columns */) VALUES (?, ?, ?)';
+    const addTransactionQuery = 'INSERT INTO transactions (id, amount, type, date, details) VALUES (?, ?, ?, ?, ?)';
 
-    db.query(addTransactionQuery, [/* specify the values */], (err, result) => {
+    db.query(addTransactionQuery, [id, amount, type, date, details], (err, result) => {
       if (err) {
         console.error('Error saving transaction data:', err);
         return res.status(500).json({ error: 'An error occurred while saving transaction data' });
@@ -100,6 +100,7 @@ app.post('/api/add-transactions', (req, res) => {
     res.status(500).json({ error: 'An error occurred while saving transaction data' });
   }
 });
+
 
 
 
