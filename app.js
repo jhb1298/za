@@ -32,6 +32,7 @@ const Admin = mongoose.model('Admin', adminSchema);
 
 const memberSchema = new mongoose.Schema({
   id: { type: Number },
+  rank:{type:Number},
   name: { type: String },
   dept: { type: String },
   email: { type: String },
@@ -161,6 +162,16 @@ app.put('/api/updateMember/:id', async (req, res) => {
   } catch (error) {
     console.error('Error updating member information:', error);
     res.status(500).json({ error: 'An error occurred while updating member information' });
+  }
+});
+
+app.put('/api/clearRank', async (req, res) => {
+  try {
+    const result = await Member.updateMany({}, { rank: 1000 });
+    res.status(200).json({ message: 'All member rank have been cleared', result });
+  } catch (error) {
+    console.error('Error resetting member names:', error);
+    res.status(500).json({ error: 'An error occurred while resetting rank' });
   }
 });
 
