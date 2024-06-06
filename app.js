@@ -39,6 +39,7 @@ const memberSchema = new mongoose.Schema({
   facebook: String,
   linkedin: String,
   about: String,
+  adress:String,
   password: { type: String },
   image: String,
   requested: { type: Number, default: 0 },
@@ -143,6 +144,26 @@ app.post('/api/member', async (req, res) => {
     res.status(500).json({ error: 'An error occurred during registration' });
   }
 });
+
+// Update member information
+app.put('/api/updateMember/:id', async (req, res) => {
+  const memberId = req.params.id;
+  const updateData = req.body;
+
+  try {
+    const updatedMember = await Member.findOneAndUpdate({ id: memberId }, updateData, { new: true });
+
+    if (!updatedMember) {
+      return res.status(404).json({ error: 'Member not found' });
+    }
+
+    res.status(200).json({ message: 'Member information updated successfully', member: updatedMember });
+  } catch (error) {
+    console.error('Error updating member information:', error);
+    res.status(500).json({ error: 'An error occurred while updating member information' });
+  }
+});
+
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
