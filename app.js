@@ -211,6 +211,8 @@ app.post('/api/add-book', async (req, res) => {
   }
 });
 
+
+//may be unnacecery
 app.post('/api/add-requested/:bookId/:userId', async (req, res) => {
   const { bookId, userId } = req.params;
   try {
@@ -241,6 +243,7 @@ app.post('/api/add-requested/:bookId/:userId', async (req, res) => {
   }
 });
 
+//may be unnacecery
 app.post('/api/add-borrowed/:bookId/:userId', async (req, res) => {
   const { bookId, userId } = req.params;
   try {
@@ -270,6 +273,134 @@ app.post('/api/add-borrowed/:bookId/:userId', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while borrowing book' });
   }
 });
+
+
+// Define the API endpoint to remove a user ID from a book's requested array
+app.post('/api/remove-requested/:bookId/:userId', async (req, res) => {
+    try {
+     const { bookId, userId } = req.params;
+  
+ // Find the book by its ID
+   const book = await Book.findOne({ id: bookId });
+   const member = await Member.findOne({ id: userId });
+  
+   if (!book) {
+    return res.status(404).json({ message: 'Book not found' });
+   }
+  
+   // Find the index of the user ID in the requested array
+   const index = book.requested.findIndex((request) => request.id === userId);
+  
+   if (index === -1) {
+    return res.status(404).json({ message: 'User ID not found in the requested array' });
+   }
+  
+   // Remove the user ID from the requested array
+   book.requested.splice(index, 1);
+  
+   // Save the updated book document
+   await book.save();
+   member.requested-=1;
+   await member.save();
+  
+   return res.json({ message: 'User removed from the requested list' });
+   } catch (error) {
+   console.error(error);
+   return res.status(500).json({ message: 'Internal Server Error' });
+   }
+  });
+
+
+  // Define the API endpoint to remove a user ID from a book's requested array
+app.post('/api/release-requested/:bookId/:userId', async (req, res) => {
+   try {
+   const { bookId, userId } = req.params;
+  
+   // Find the book by its ID
+   const book = await Book.findOne({ id: bookId });
+   const member = await Member.findOne({ id: userId });
+  
+   if (!book) {
+    return res.status(404).json({ message: 'Book not found' });
+   }
+  
+   // Find the index of the user ID in the requested array
+   const index = book.borrowed.findIndex((br) => br.id === userId);
+  
+   if (index === -1) {
+    return res.status(404).json({ message: 'User ID not found in the requested array' });
+   }
+  
+  
+   // Remove the user ID from the requested array
+   book.borrowed.splice(index, 1);
+   
+   book.available+=1;
+   // Save the updated book document
+   await book.save();
+  
+  
+   member.borrowed-=1
+   await member.save();
+  
+   return res.json({ message: 'User released successfully' });
+   } catch (error) {
+   console.error(error);
+   return res.status(500).json({ message: 'Internal Server Error' });
+   }
+  });
+
+
+
+  // Define the API endpoint to remove a user ID from a book's requested array and add it to the borrowed list
+app.post('/api/accept-requested/:bookId/:userId', async (req, res) => {
+   try {
+   const { bookId, userId } = req.params;
+  
+   // Find the book by its ID
+   const book = await Book.findOne({ id: bookId });
+   const member = await Member.findOne({ id: userId });
+  
+  
+   if (!book || member.borrowed>=3) {
+    return res.status(404).json({ message: 'Book not found' });
+   }
+   if (member.borrowed>=3) {
+    return res.status(404).json({ message: 'Borrow limit exceed' });
+   }
+  
+   // Find the index of the user ID in the requested array
+   const requestedIndex = book.requested.findIndex((req) => req.id === userId);
+  
+   if (requestedIndex === -1) {
+    return res.status(404).json({ message: 'User not found in requested list' });
+   }
+  
+   // Remove the user ID from the requested array and add it to the borrowed list with the current date
+   const removedUser = book.requested.splice(requestedIndex, 1)[0];
+   book.borrowed.push({ id: removedUser.id, date: new Date().toISOString() });
+  
+   book.available-=1;
+   // Save the updated book document
+   await book.save();
+  
+   member.requested-=1
+   member.borrowed+=1
+  
+   await member.save();
+  
+   return res.json({ message: 'User added to the borrowed list ' });
+   } catch (error) {
+   console.error(error);
+   return res.status(500).json({ message: 'Internal Server Error' });
+   }
+  });
+  
+  
+  
+  
+
+
 
 app.get('/api/get-all-books', async (req, res) => {
   try {
