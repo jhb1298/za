@@ -30,6 +30,20 @@ const adminSchema = new mongoose.Schema({
 });
 const Admin = mongoose.model('Admin', adminSchema);
 
+
+const infoSchema = new mongoose.Schema({
+  name:{type: String},
+  year:{type : String},
+  logo:{type:String},
+  bkash:{type:String},
+  nagad:{type:String},
+  rocket:{type:String},
+  pQuote:{type:String},
+  sQuote:{type:String}
+});
+const Info=mongoose.model('Info',infoSchema)
+
+
 const memberSchema = new mongoose.Schema({
   id: { type: Number },
   rank:{type:Number},
@@ -172,6 +186,26 @@ app.put('/api/clearRank', async (req, res) => {
   } catch (error) {
     console.error('Error resetting member names:', error);
     res.status(500).json({ error: 'An error occurred while resetting rank' });
+  }
+});
+
+app.put('/api/updateInfo',async (req,res)=>{
+  try{
+    const result = await Info.updateMany({},req.body)
+    res.status(200).json({message:"Info Updated to:",result})
+  }catch(error){
+    console.error('Error updating error:', error);
+    res.status(500).json({ error: 'An error occurred while updating info' });
+  }
+})
+
+app.get('/api/fetchInfo', async (req, res) => {
+  try {
+    const info = await Info.find({});
+    res.status(200).json(info);
+  } catch (error) {
+    console.error('Error fetching info:', error);
+    res.status(500).json({ error: 'An error occurred while fetching info' });
   }
 });
 
